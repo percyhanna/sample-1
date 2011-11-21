@@ -198,15 +198,134 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 /* =============================================================================
    Primary styles
-   Author: 
+   Author: Andrew Hanna
    ========================================================================== */
 
+header {
+  position: absolute;
+  top: 0;
+  height: 150px;
+  width: 100%;
 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 1.0);
 
+  background-color: #666;
+  background-color: #142846;
+  background-image:
+    -webkit-gradient(
+      radial,
+      20% -86, 200,
+      15% 86, 800,
+      color-stop(0, rgba(64,64,64,0.5)),
+      color-stop(1, rgba(0,0,0,0.4))
+    ),
+    -webkit-gradient(
+      linear,
+      left top,
+      2% bottom,
+      color-stop(0.2, rgb(30,62,105)),
+      color-stop(1.0, rgb(20,40,70))
+    );
+  background-image:
+    -moz-radial-gradient(50% 50%, closest-corner, rgba(192,192,192,0.25) 0%, rgba(0,0,0,0.5) 90%),
+    -moz-linear-gradient(
+      top,
+      rgb(30,62,105),
+      rgb(20,40,70)
+    );
+  background-image: -o-linear-gradient(
+    top,
+    rgb(30,62,105),
+    rgb(20,40,70)
+  );
+}
 
+#search-wrapper {
+  width: 300px;
+  margin: 25px auto;
+  background-color: #fff;
+  
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  
+  box-shadow: 0 1px 2px 2px rgba(192, 192, 192, 0.4);
+}
 
+#search-input-wrapper {
+  width: 280px;
+  background: #ccc;
+  padding: 10px;
 
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
 
+  box-shadow: 0 1px 0 1px rgba(128, 128, 128, 0.5);
+}
+
+#search-input {
+  width: 262px;
+  font-size: 18px;
+  padding: 4px 8px;
+  
+  border: solid 1px #ccc;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  outline: none;
+
+  box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+#search-sources {
+  width: 260px;
+  height: 50px;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+}
+
+#search-sources li {
+  display: block;
+  width: 130px;
+  height: 53px;
+  float: left;
+  margin: 0;
+  background-position: 18px 6px;
+  background-repeat: no-repeat;
+}
+
+#search-sources li.twitter { background-image: url('/img/twitter.png'); }
+#search-sources li.flickr  { background-image: url('/img/flickr.png'); }
+
+#search-sources li label {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+  padding: 13px 0;
+  display: block;
+}
+
+#search-sources li input {
+  margin-right: 45px;
+}
+
+/* main content */
+
+#main {
+  margin: 150px auto 0 auto;
+  width: 600px;
+  border: solid 1px #ccc;
+}
+
+#feed {
+  list-style: none;
+}
+
+#feed li {
+  
+}
 
 /* =============================================================================
    Non-semantic helper classes

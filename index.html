@@ -12,34 +12,57 @@
   <meta name="author" content="">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  
   <link rel="stylesheet" href="/css/style.css">
-
-  <script src="/js/libs/modernizr-2.0.6.min.js"></script>
 </head>
+
 <body>
+  <div id="container">
+    <header>
+      <div id="search-wrapper">
+        <div id="search-input-wrapper">
+          <input type="text" id="search-input" placeholder="Search">
+        </div>
 
-<div id="container">
-  <header>
-    
-  </header>
-  
-  <div id="main" role="main">
+        <ul id="search-sources">
+          <li class="twitter"><label><input id="twitter-checkbox" type="checkbox"> Twitter</label></li>
+          <li class="flickr"><label><inputid="flickr-checkbox" type="checkbox"> Flickr</label></li>
+        </ul>
+      </div>
+    </header>
 
-  </div>
-  
-  <footer>
+    <div id="main" role="main">
+      <ul id="feed">
+        <li id="feed-item-12345" class="twitter-feed">
+          <img src="/img/twitter.png">
+          <span class="label">Description</span>
+          <span class="time">Time</span>
+          <span class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
+        </li>
+        <li id="feed-item-12345" class="flickr-feed">
+          <img src="/img/twitter.png">
+          <span class="label">Description</span>
+          <span class="time">Time</span>
+          <span class="content">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
+        </li>
+      </ul>
+    </div>
 
-  </footer>
-</div> <!--! end of #container -->
+    <footer>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="/js/libs/jquery-1.7.min.js"><\/script>')</script>
+    </footer>
+  </div> <!--! end of #container -->
 
-<!--[if lt IE 7 ]>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.7.min.js"><\/script>')</script>
+
+  <script src="/js/libs/js-class.js"></script>
+  <script src="/js/sample.js"></script>
+
+  <!--[if lt IE 7 ]>
   <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
   <script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
-<![endif]-->
+  <![endif]-->
 
 </body>
 </html>
