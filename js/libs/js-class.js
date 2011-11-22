@@ -44,6 +44,10 @@
 
             return false;
         },
+        
+        isArray: function(a) {
+            return this.isKindOfClass(a, Array);
+        },
 
         isFunction: function(obj) {
             return typeof obj === 'function'
