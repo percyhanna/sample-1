@@ -7,6 +7,10 @@ SampleApp.Feeds.Base = Class.create({
     initialize: function(searchController) {
         this._searchController = searchController;
         this._enabled = true;
+        this.reset();
+    },
+    
+    reset: function() {
     },
     
     enable: function(enable) {
@@ -31,9 +35,8 @@ SampleApp.Feeds.Base = Class.create({
 
 // Flickr feed handler
 SampleApp.Feeds.Flickr = Class.create(SampleApp.Feeds.Base, {
-    initialize: function(searchController) {
+    reset: function() {
         this._lastImageId = '';
-        this.$S(arguments, searchController);
     },
     
     update: function(update) {
@@ -73,6 +76,10 @@ SampleApp.Feeds.Flickr = Class.create(SampleApp.Feeds.Base, {
 
 // Twitter feed handler
 SampleApp.Feeds.Twitter = Class.create(SampleApp.Feeds.Base, {
+    reset: function() {
+        this._lastMaxId = null;
+    },
+    
     update: function(update) {
         var url = 'http://search.twitter.com/search.json?q=' + this.keywords().join('%20') + '&callback=jsonTwitterFeed';
         this._update = update;
@@ -124,10 +131,12 @@ SampleApp.SearchController = Class.create({
         this._keywords = keywords;
         this.resetInterval();
         
-        // refresh the feed
+        // reset data
         $('#feed').html('');
         this._feedItems = [];
         this.updateFeed();
+        
+        // refresh the feed
         this._updateFeed = true;
         this.refreshFeed();
         this._updateFeed = false;
@@ -181,6 +190,9 @@ SampleApp.SearchController = Class.create({
     
     refreshFeed: function() {
         $.each(this._feeds, function(index, feed) {
+            if (this._updateFeed) {
+                feed.reset();
+            }
             feed.update(this._updateFeed);
         }.bind(this));
     },
