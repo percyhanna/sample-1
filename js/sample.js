@@ -115,6 +115,7 @@ SampleApp.Feeds.Twitter = Class.create(SampleApp.Feeds.Base, {
 // Search Controller
 SampleApp.SearchController = Class.create({
     initialize: function() {
+        this._baseTitle = document.title;
         this._feeds = [];
         this._feedTimer = null;
         this._feedInterval = null;
@@ -156,35 +157,12 @@ SampleApp.SearchController = Class.create({
     addResult: function(data, update) {
         var rendered = SampleApp.Templates.Result.render(data);
         if (update) {
-            this.insertResult(rendered, '' + (data.date.getTime() / 1000));
+            $('#feed').prepend(rendered);
         } else {
             if (!this._feedTimer) {
                 this._feedTimer = setTimeout(this.updateFeed.bind(this), 1);
             }
-            this._feedItems.push({
-                content: rendered,
-                time: data.date.getTime() / 1000
-            });
-        }
-    },
-    
-    insertResult: function(result, ts) {
-        if (!$('#feed li').length) {
-            $('#feed').prepend($(result).data('ts', ts));
-        } else {
-            var item = $(result).data('ts', ts),
-                inserted = false;
-            $('#feed li').each(function() {
-                var itemTs = $(this).data('ts');
-                if (itemTs <= ts) {
-                    $(result).data('ts', ts).insertBefore(this);
-                    inserted = true;
-                    return false;
-                }
-            });
-            if (!inserted) {
-                $('#feed').prepend($(result).data('ts', ts));
-            }
+            this._feedItems.push(rendered);
         }
     },
     
@@ -197,21 +175,38 @@ SampleApp.SearchController = Class.create({
         }.bind(this));
     },
     
+    updateTitle: function() {
+        var title = '',
+            count = this._feedItems.length;
+        if (count) {
+            title += count + ' new item' + (count === 1 ? '' : 's') + ' - ';
+        }
+        if (this._keywords.length) {
+            title += '"' + this._keywords.join(', ') + '" - ';
+        }
+        title += this._baseTitle;
+        document.title = title
+    },
+    
     updateFeed: function() {
         var count = this._feedItems.length,
             label = 'There ' + (count === 1 ? 'is ' : 'are ') + count + ' new item' + (count === 1 ? '' : 's');
         $('#new-items-notice span.label').text(label);
         $('#new-items-notice')[count ? 'show' : 'hide']();
+        this.updateTitle();
         this._feedTimer = null;
     },
     
     insertNewItems: function() {
-        $.each(this._feedItems, function(index, item) {
-            this.insertResult(item.content, item.time);
-        }.bind(this));
+        var newItems = $(this._feedItems.join(''));
+        $(newItems).select('li').addClass('new');
+        $('#feed').prepend(newItems);
         this._feedItems = [];
         this.updateFeed();
         this.resetInterval();
+        window.setTimeout(function() {
+            $('#feed li.new').removeClass('new');
+        }, 100);
     }
 });
 

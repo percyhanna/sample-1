@@ -346,8 +346,15 @@ header {
 #feed li {
   clear: both;
   border-bottom: solid 1px #ccc;
+  background-color: transparent;
   min-height: 75px;
   padding: 10px;
+  -webkit-transition: background-color 2s linear;
+  transition: background-color 2s linear;
+}
+
+#feed li.new {
+  background-color: rgba(255, 255, 0, 0.25);
 }
 
 #feed li img {
