@@ -1,3 +1,37 @@
+// Initialize the app
+$(function() {
+    var searchController = new SampleApp.SearchController(),
+        flickrFeed = new SampleApp.Feeds.Flickr(searchController),
+        twitterFeed = new SampleApp.Feeds.Twitter(searchController);
+    
+    // add the feeds to the search controller
+    searchController.addFeed(flickrFeed);
+    searchController.addFeed(twitterFeed);
+    
+    // declare JSONP callbacks, bind to feeds
+    window.jsonFlickrFeed = flickrFeed.processResults.bind(flickrFeed);
+    window.jsonTwitterFeed = twitterFeed.processResults.bind(twitterFeed);
+    
+    function triggerSearchEvent() {
+        searchController.performSearch($('#search-input').val().split(/\s+/));
+    }
+    
+    // monitor checkboxes
+    $('#twitter-checkbox').bind('change', function() {
+        var checked = $(this).attr('checked');
+        twitterFeed.enable(checked);
+        $('#feed')[checked ? 'removeClass' : 'addClass']('disable-twitter');
+    });
+    $('#flickr-checkbox').bind('change', function() {
+        var checked = $(this).attr('checked');
+        flickrFeed.enable(checked);
+        $('#feed')[checked ? 'removeClass' : 'addClass']('disable-flickr');
+    });
+
+    $('#search-input').removeAttr('disabled').attr('placeholder', 'Search...').bind('change', triggerSearchEvent);
+    $('#new-items-notice').bind('click', searchController.insertNewItems.bind(searchController));
+});
+
 // Flickr feed handler
 var SampleApp = SampleApp || {};
 SampleApp.Feeds = {};
@@ -41,7 +75,7 @@ SampleApp.Feeds.Flickr = Class.create(SampleApp.Feeds.Base, {
     
     update: function(update) {
         this._update = update;
-        this.appendScript('http://api.flickr.com/services/feeds/photos_public.gne?tags=' + this.keywords().join(',') + '&format=json');
+        this.appendScript('http://api.flickr.com/services/feeds/photos_public.gne?tags=' + encodeURIComponent(this.keywords().join(',')) + '&format=json');
     },
     
     processResults: function(results) {
@@ -81,7 +115,7 @@ SampleApp.Feeds.Twitter = Class.create(SampleApp.Feeds.Base, {
     },
     
     update: function(update) {
-        var url = 'http://search.twitter.com/search.json?q=' + this.keywords().join('%20') + '&callback=jsonTwitterFeed';
+        var url = 'http://search.twitter.com/search.json?q=' + encodeURIComponent(this.keywords().join(' ')) + '&callback=jsonTwitterFeed';
         this._update = update;
         if (this._lastMaxId) {
             url += '&since_id=' + this._lastMaxId;
@@ -114,6 +148,8 @@ SampleApp.Feeds.Twitter = Class.create(SampleApp.Feeds.Base, {
 
 // Search Controller
 SampleApp.SearchController = Class.create({
+    refreshRate: 10000,
+    
     initialize: function() {
         this._baseTitle = document.title;
         this._feeds = [];
@@ -133,7 +169,7 @@ SampleApp.SearchController = Class.create({
         this.resetInterval();
         
         // reset data
-        $('#feed').html('');
+        $('#feed').html('<li class="loading">Loading results...</li>');
         this._feedItems = [];
         this.updateFeed();
         
@@ -151,11 +187,12 @@ SampleApp.SearchController = Class.create({
         if (this._feedInterval) {
             clearInterval(this._feedInterval);
         }
-        this._feedInterval = setInterval(this.refreshFeed.bind(this), 15000);
+        this._feedInterval = setInterval(this.refreshFeed.bind(this), this.refreshRate);
     },
     
     addResult: function(data, update) {
         var rendered = SampleApp.Templates.Result.render(data);
+        $('#feed li.loading').remove();
         if (update) {
             $('#feed').prepend(rendered);
         } else {
@@ -192,7 +229,7 @@ SampleApp.SearchController = Class.create({
         var count = this._feedItems.length,
             label = 'There ' + (count === 1 ? 'is ' : 'are ') + count + ' new item' + (count === 1 ? '' : 's');
         $('#new-items-notice span.label').text(label);
-        $('#new-items-notice')[count ? 'show' : 'hide']();
+        $('#new-items-notice').css('top', count ? '150px' : '110px');
         this.updateTitle();
         this._feedTimer = null;
     },
@@ -200,12 +237,15 @@ SampleApp.SearchController = Class.create({
     insertNewItems: function() {
         var newItems = $(this._feedItems.join(''));
         $(newItems).select('li').addClass('new');
-        $('#feed').prepend(newItems);
+        $('#feed').removeClass('animate');
+        $('#feed').css('top', '-' + (this._feedItems.length * 95) + 'px').prepend(newItems);
         this._feedItems = [];
         this.updateFeed();
         this.resetInterval();
         window.setTimeout(function() {
             $('#feed li.new').removeClass('new');
+            $('#feed').addClass('animate');
+            $('#feed').css('top', '0');
         }, 100);
     }
 });
@@ -225,8 +265,9 @@ SampleApp.Template = Class.create({
     },
     
     render: function(data) {
-        var result = this._strings[0];
-        for (matchIndex = 0; matchIndex < this._matches.length; ++matchIndex) {
+        var result = this._strings[0],
+            length = this._matches.length;
+        for (matchIndex = 0; matchIndex < length; ++matchIndex) {
             result += this.valueForKey(this._matches[matchIndex], data) + this._strings[matchIndex + 1];
         }
         return result;
@@ -253,39 +294,3 @@ SampleApp.Templates.Result = new SampleApp.Template(
         '<span class="label"><a href="#{titleLink}" target="_blank">#{title}</a></span>' +
         '<p class="content">#{description}</p>' +
     '</li>');
-
-// Initialize the app
-$(function() {
-    var searchController = new SampleApp.SearchController(),
-        flickrFeed = new SampleApp.Feeds.Flickr(searchController),
-        twitterFeed = new SampleApp.Feeds.Twitter(searchController);
-    
-    // add the feeds
-    searchController.addFeed(flickrFeed);
-    searchController.addFeed(twitterFeed);
-    
-    // add global trackers
-    window.jsonFlickrFeed = flickrFeed.processResults.bind(flickrFeed);
-    window.jsonTwitterFeed = twitterFeed.processResults.bind(twitterFeed);
-    
-    function triggerSearchEvent() {
-        searchController.performSearch($('#search-input').val().split(/\s+/));
-    }
-    
-    // monitor checkboxes
-    $('#twitter-checkbox').bind('change', function() {
-        var checked = $(this).attr('checked');
-        twitterFeed.enable(checked);
-        $('#feed')[checked ? 'removeClass' : 'addClass']('disable-twitter');
-    });
-    $('#flickr-checkbox').bind('change', function() {
-        var checked = $(this).attr('checked');
-        flickrFeed.enable(checked);
-        $('#feed')[checked ? 'removeClass' : 'addClass']('disable-flickr');
-    });
-
-    $('#search-input').bind('change', triggerSearchEvent);
-    $('#new-items-notice').bind('click', function() {
-        searchController.insertNewItems();
-    });
-});

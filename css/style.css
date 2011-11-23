@@ -202,10 +202,11 @@ table { border-collapse: collapse; border-spacing: 0; }
    ========================================================================== */
 
 header {
-  position: absolute;
+  position: fixed;
   top: 0;
   height: 150px;
   width: 100%;
+  z-index: 2;
 
   box-shadow: 0 2px 10px rgba(0, 0, 0, 1.0);
 
@@ -312,6 +313,10 @@ header {
 }
 
 #new-items-notice {
+  position: fixed;
+  top: 110px;
+  width: 580px;
+  z-index: 1;
   background: #333;
   color: #fff;
   font-weight: bold;
@@ -319,6 +324,8 @@ header {
   font-size: 14px;
   box-shadow: 0 1px 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  -webkit-transition: top 1s ease-in-out;
+  transition: top 1s ease-in-out;
 }
 
 #new-items-notice .click {
@@ -330,6 +337,7 @@ header {
 /* main content */
 
 #main {
+  top: 150px;
   margin: 150px auto;
   width: 600px;
   border: solid 1px #ccc;
@@ -337,10 +345,17 @@ header {
 }
 
 #feed {
+  position: relative;
+  top: 0;
   margin: 0;
   padding: 0;
   list-style: none;
   background-color: #f8f8f8;
+}
+
+#feed.animate {
+  -webkit-transition: top 1.5s ease-in-out;
+  transition: top 1.5s ease-in-out;
 }
 
 #feed li {
@@ -349,12 +364,19 @@ header {
   background-color: transparent;
   min-height: 75px;
   padding: 10px;
-  -webkit-transition: background-color 2s linear;
-  transition: background-color 2s linear;
+  -webkit-transition: background-color 4s linear;
+  transition: background-color 4s linear;
 }
 
 #feed li.new {
   background-color: rgba(255, 255, 0, 0.25);
+}
+
+#feed li.loading {
+  padding: 30px;
+  height: 20px;
+  text-align: center;
+  font-size: 18px;
 }
 
 #feed li img {
