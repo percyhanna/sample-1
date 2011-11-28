@@ -309,7 +309,7 @@ header {
 }
 
 #search-sources li input {
-  margin-right: 45px;
+  margin-right: 50px;
 }
 
 #new-items-notice {
@@ -384,6 +384,7 @@ header {
   margin-right: 10px;
   max-width: 48px;
   max-height: 48px;
+  width: 48px;
 }
 
 #feed li .time {

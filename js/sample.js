@@ -1,5 +1,15 @@
 // Initialize the app
 $(function() {
+    // check for CSS3 transition support
+    $.support.transition = (function(){ 
+        var style = (document.body || document.documentElement).style;
+        return style.transition !== undefined
+            || style.WebkitTransition !== undefined
+            || style.MozTransition !== undefined
+            || style.MsTransition !== undefined
+            || style.OTransition !== undefined;
+    })();
+
     var searchController = new SampleApp.SearchController(),
         flickrFeed = new SampleApp.Feeds.Flickr(searchController),
         twitterFeed = new SampleApp.Feeds.Twitter(searchController);
@@ -28,7 +38,7 @@ $(function() {
         $('#feed')[checked ? 'removeClass' : 'addClass']('disable-flickr');
     });
 
-    $('#search-input').removeAttr('disabled').attr('placeholder', 'Search...').bind('change', triggerSearchEvent);
+    $('#search-input').removeAttr('disabled').val('').attr('placeholder', 'Search...').bind('change', triggerSearchEvent);
     $('#new-items-notice').bind('click', searchController.insertNewItems.bind(searchController));
 });
 
@@ -235,17 +245,22 @@ SampleApp.SearchController = Class.create({
     },
     
     insertNewItems: function() {
-        var newItems = $(this._feedItems.join(''));
-        $(newItems).select('li').addClass('new');
+        var newItems = $(this._feedItems.join('').replace(/<li class="/g, '<li class="new '));
         $('#feed').removeClass('animate');
         $('#feed').css('top', '-' + (this._feedItems.length * 95) + 'px').prepend(newItems);
         this._feedItems = [];
         this.updateFeed();
         this.resetInterval();
         window.setTimeout(function() {
-            $('#feed li.new').removeClass('new');
-            $('#feed').addClass('animate');
-            $('#feed').css('top', '0');
+            if ($.support.transition) {
+                $('#feed').addClass('animate');
+                $('#feed li.new').removeClass('new');
+                $('#feed').css('top', '0');
+            } else {
+                $('#feed').animate({
+                    top: 0
+                });
+            }
         }, 100);
     }
 });
@@ -288,7 +303,7 @@ SampleApp.Template = Class.create({
 });
 
 SampleApp.Templates.Result = new SampleApp.Template(
-    '<li id="feed-item-#{feed_id}" class="#{type}-feed">' +
+    '<li class="#{type}-feed" id="feed-item-#{feed_id}">' +
         '<img src="#{imageSource}" >' +
         '<span class="time">#{time}</span>' +
         '<span class="label"><a href="#{titleLink}" target="_blank">#{title}</a></span>' +
